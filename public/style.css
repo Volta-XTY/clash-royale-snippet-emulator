@@ -1,0 +1,64 @@
+body{
+    display: flex;
+}
+.pad{
+    flex-grow: 1;
+}
+.gap{
+    width: 10px;
+}
+#album{
+    width: min(800px, 95%);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 10px;
+    row-gap: 10px;
+}
+.scene{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 1px;
+    row-gap: 1px;
+}
+.snippet{
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    align-content: center;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    font-size: larger;
+    text-shadow: 1px 1px 1px white,
+    1px -1px 1px white,
+    -1px -1px 1px white,
+    -1px 1px 1px white;
+    background-size: contain;
+}
+.common{
+    background-color: rgb(153, 204, 255);
+    background-image: url(https://files.seeusercontent.com/2026/03/02/E0am/Screenshot-2026-03-02-210300-Com.png);
+}
+.rare{
+    background-color: rgb(255, 204, 102);
+    background-image: url(https://files.seeusercontent.com/2026/03/02/6Fhb/Screenshot-2026-03-02-210300-Rar.png);
+}
+.epic{
+    background-color: rgb(255, 153, 255);
+    background-image: url(https://files.seeusercontent.com/2026/03/02/iU0g/Screenshot-2026-03-02-210300-Epi.png);
+}
+.legendary{
+    background-color: rgb(255, 200, 255);
+    background-image: url(https://files.seeusercontent.com/2026/03/02/We3t/Screenshot-2026-03-02-210300-Leg.png);
+}
+.obtained{
+    background-color: rgb(100, 255, 150);
+    background-image: none;
+}
+.selected{
+}
+#controls{
+    min-width: 200px;
+}
+button.roll{
+    display: block;
+}

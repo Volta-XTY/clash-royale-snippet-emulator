@@ -1,12 +1,213 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hello, World!</title>
-	</head>
-	<body>
-		<h1 id="heading">Hello, World!</h1>
-		<p>This page comes from a static asset stored at `public/index.html` as configured in `wrangler.jsonc`.</p>
-	</body>
+        <title>Album Event Emulator</title>
+		<link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="pad"></div>
+        <div id="album"></div>
+        <div class="gap"></div>
+        <div id="controls"></div>
+        <div class="pad"></div>
+    </body>
+    <script>
+        const assert = (cond) => {
+            if(!cond){
+                console.error("Assertion Error");
+            }
+        };
+        const HTML = (tagname, attrs, ...children) => {
+            if(attrs === undefined) return document.createTextNode(tagname);
+            const ele = document.createElement(tagname);
+            if(attrs) for(const [key, value] of Object.entries(attrs)){
+                if(value === null || value === undefined) continue;
+                if(key.charAt(0) === "_"){
+                    const type = key.slice(1);
+                    ele.addEventListener(type, value);
+                }
+                else if(key === "eventListener"){
+                    for(const listener of value){
+                        ele.addEventListener(listener.type, listener.listener, listener.options);
+                    }
+                }
+                else ele.setAttribute(key, value);
+            }
+            for(const child of children) if(child) ele.append(child);
+            return ele;
+        };
+        const snippet_weights = [
+            [60, 60, 60, 60, 60, 60, 60, 60, 60],
+            [60, 60, 60, 60, 60, 60, 60, 60, 60],
+            [50, 50, 50, 50, 50, 50, 50, 38, 38],
+            [50, 50, 50, 50, 50, 50, 50, 38, 38],
+            [40, 40, 40, 40, 40, 40, 30, 30, 20],
+            [40, 40, 40, 40, 40, 30, 30, 20, 10],
+            [30, 30, 30, 30, 30, 23, 23, 15, 8],
+            [30, 30, 30, 30, 30, 23, 23, 15, 8],
+            [20, 20, 20, 20, 20, 15, 15, 10, 5],
+        ];
+        const snippet_weights_flat = snippet_weights.flat();
+        const total_snippet_weight = snippet_weights.reduce((total, arr) => total + arr.reduce((total, weight) => total + weight, 0), 0);
+        console.log(total_snippet_weight);
+        const snippet_rarities = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 1],
+            [0, 0, 0, 0, 0, 0, 0, 1, 1],
+            [0, 0, 0, 0, 0, 0, 1, 1, 2],
+            [0, 0, 0, 0, 0, 1, 1, 2, 3],
+            [0, 0, 0, 0, 0, 1, 1, 2, 3],
+            [0, 0, 0, 0, 0, 1, 1, 2, 3],
+            [0, 0, 0, 0, 0, 1, 1, 2, 3],
+        ];
+        const rarity_text = ["Common", "Rare", "Epic", "Legendary"]
+        const total_snippet_weight_with_rarity = [0, 1, 2, 3].map(rarity => snippet_rarities.reduce((total, row, i) => total + row.reduce((total, col, j) => col === rarity ? total + snippet_weights[i][j] : total, 0), 0) / total_snippet_weight);
+        console.log(total_snippet_weight_with_rarity);
+        const album_element = document.getElementById("album");
+        const control_element = document.getElementById("controls");
+        const snippet_elements = snippet_rarities.map((arr, i) => {
+            const children = arr.map((rarity, j) => 
+                HTML("div", {class: "snippet " + rarity_text[rarity].toLowerCase()}, snippet_weights[i][j])
+            );
+            const ele = HTML("div", {class: "scene"}, ...children);
+            album_element.append(ele);
+            return children;
+        });
+        console.log(snippet_elements);
+        const Swap = ([r1, c1], [r2, c2]) => {
+            r1 -= 1; c1 -=1; r2 -= 1; c2 -= 1;
+            const ele1 = snippet_elements[r1][c1];
+            const ele2 = snippet_elements[r2][c2];
+            const temp = document.createElement("div");
+            ele1.parentNode.insertBefore(temp, ele1);
+            ele2.parentNode.insertBefore(ele1, ele2);
+            temp.parentNode.insertBefore(ele2, temp);
+            temp.parentNode.removeChild(temp);
+        };
+        Swap([3, 8], [3, 3]);
+        Swap([3, 9], [3, 5]);
+        Swap([4, 8], [4, 7]);
+        Swap([4, 9], [4, 5]);
+        Swap([5, 8], [5, 3]);
+        Swap([5, 9], [5, 5]);
+        Swap([6, 9], [6, 5]);
+        Swap([6, 8], [6, 3]);
+        Swap([6, 7], [6, 3]);
+        Swap([6, 6], [6, 2]);
+        Swap([7, 9], [7, 5]);
+        Swap([7, 8], [7, 3]);
+        Swap([7, 7], [7, 1]);
+        Swap([8, 9], [8, 6]);
+        Swap([8, 8], [8, 1]);
+        Swap([8, 9], [8, 5]);
+        Swap([9, 9], [9, 5]);
+        Swap([9, 8], [9, 3]);
+        Swap([9, 7], [9, 1]);
+        const RollHelper = snippet_weights.flat(1).flatMap((weight, i) => new Array(weight).fill(i));
+        let helper_length = RollHelper.length;
+        let bonus = 0;
+        assert(RollHelper.length === total_snippet_weight);
+        let selected_snippet = null;
+        const SetSelected = (row, col) => {
+            //console.log(row, col);
+            snippet_elements[row][col].classList.add("obtained");
+            snippet_elements[row][col].classList.add("selected");
+            if(selected_snippet) selected_snippet.classList.remove("selected");
+            selected_snippet = snippet_elements[row][col];
+        }
+        const RollOnce = (unique = false) => {
+            if(unique && !helper_length){
+                bonus += 1;
+                return 0;
+            }
+            const i = Math.floor(Math.random() * (unique ? helper_length : RollHelper.length));
+            const ind = RollHelper[i];
+            const row = Math.floor(ind / 9);
+            const col = ind - row * 9;
+            SetSelected(row, col);
+            if(i >= helper_length){
+                return snippet_rarities[row][col] + 2;
+            }
+            const weight = snippet_weights[row][col];
+            let prev = i;
+            while(RollHelper[prev] === ind && prev >= 0) prev -= 1;
+            prev += 1;
+            helper_length -= weight;
+            RollHelper.splice(prev, weight);
+            RollHelper.push(...new Array(weight).fill(ind));
+            return 0;
+        };
+        let pity = 0;
+        const pity_required_for_unique = 5;
+        let roll_cnt = 0;
+        const roll_cnt_element_init_text = "Rolls: 0";
+        const pity_cnt_element_init_text = `0/${pity_required_for_unique}`;
+        const roll_cnt_element = HTML("div", {class: "roll-cnt"}, roll_cnt_element_init_text);
+        const pity_cnt_element = HTML("div", {class: "roll-cnt"}, pity_cnt_element_init_text);
+        const Roll = (cnt = 1) => {
+            roll_cnt += cnt;
+            let pity_cnt = 0;
+            for(let i = 0; i < cnt; i++){
+                const this_pity = RollOnce();
+                //console.log(this_pity);
+                pity += this_pity;
+                if(pity >= pity_required_for_unique){
+                    pity_cnt += 1;
+                    pity -= pity_required_for_unique;
+                    RollOnce(true);
+                }
+            }
+            roll_cnt_element.textContent = `Rolls: ${roll_cnt}${bonus ? ` (+${bonus} bonus reward)` : ""}`
+            pity_cnt_element.textContent = `${pity}/${pity_required_for_unique}${pity_cnt > 0 ? ` (+${pity_cnt} unique roll)` : ""}`;
+        };
+        const Loop = async (body, cnt) => {
+            for(let i = 0; i < cnt; i++){
+                body();
+                await new Promise((res) => setTimeout(res, 50));
+            }
+        };
+        const roll_once_btn = HTML("button", {class: "roll", _click: () => Roll(1)}, "Roll Once");
+        const roll_four_times_btn = HTML("button", {class: "roll", _click: () => Loop(Roll, 4)}, "Roll Four Times");
+        const roll_six_times_btn = HTML("button", {class: "roll", _click: () => Loop(Roll, 6)}, "Roll Six Times");
+        control_element.append(roll_cnt_element);
+        control_element.append(pity_cnt_element);
+        control_element.append(roll_once_btn);
+        control_element.append(roll_four_times_btn);
+        control_element.append(roll_six_times_btn);
+        const CheckRollHelper = () => {
+            let remain = 0;
+            let last = -1;
+            for(let i = 0; i < RollHelper.length; i++){
+                if(!remain){
+                    if(RollHelper[i] === last){
+                        console.log(i, last, remain, RollHelper);
+                        return false;
+                    }
+                    last = RollHelper[i];
+                    remain = snippet_weights_flat[last] - 1;
+                }
+                else{
+                    if(RollHelper[i] !== last){
+                        console.log(i, last, remain, RollHelper);
+                        return false;
+                    }
+                    remain -= 1;
+                }
+            }
+            return true;
+        };
+        const Restart = () => {
+            pity = 0; roll_cnt = 0; bonus = 0;
+            console.log(CheckRollHelper());
+            helper_length = RollHelper.length;
+            snippet_elements.forEach(row => row.forEach(col => col.classList.remove("obtained")));
+            roll_cnt_element.textContent = roll_cnt_element_init_text;
+            pity_cnt_element.textContent = pity_cnt_element_init_text;
+        };
+        const restart_btn = HTML("button", {class: "roll", _click: Restart}, "Restart");
+        control_element.append(restart_btn);
+    </script>
 </html>
