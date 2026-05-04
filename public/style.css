@@ -1,9 +1,44 @@
-body{
+main{
     display: flex;
+    flex-direction: row;
 }
-.pad{
-    flex-grow: 1;
+.center{
+    text-align: center;
 }
+footer{
+    margin-top: 50px;
+    font-size: small;
+}
+header{
+    margin-bottom: 20px;
+}
+@media (width > 640px) {
+    .pad{
+        flex-grow: 1;
+    }
+}
+@media (width <= 640px) {
+    main{
+        flex-direction: column;
+    }
+    #album{
+        margin: auto;
+    }
+    #controls{
+        display: flex;
+        flex-direction: column;
+    }
+    #buttons{
+        display: flex;
+        flex-direction: row;
+    }
+    #texts{
+        display: grid;
+        column-gap: 10px;
+        grid-template-columns: max-content max-content 1fr;
+    }
+}
+
 .gap{
     width: 10px;
 }
@@ -13,7 +48,8 @@ body{
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 10px;
     row-gap: 10px;
-    @media (width <= 520px) {
+    margin-bottom: 10px;
+    @media (width <= 640px) {
         grid-template-columns: 1fr 1fr;
     }
 }
@@ -30,7 +66,7 @@ body{
     text-align: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bold;
-    font-size: clamp(8px, 2.5vw, 24px);
+    font-size: clamp(12px, 4vw, 24px);
     text-shadow: 1px 1px 1px white,
     1px -1px 1px white,
     -1px -1px 1px white,
