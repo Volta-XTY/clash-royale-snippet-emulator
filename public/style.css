@@ -13,6 +13,9 @@ body{
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 10px;
     row-gap: 10px;
+    @media (width <= 520px) {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 .scene{
     display: grid;
@@ -27,7 +30,7 @@ body{
     text-align: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bold;
-    font-size: larger;
+    font-size: clamp(8px, 2.5vw, 24px);
     text-shadow: 1px 1px 1px white,
     1px -1px 1px white,
     -1px -1px 1px white,
@@ -36,28 +39,28 @@ body{
 }
 .common{
     background-color: rgb(153, 204, 255);
-    background-image: url(https://files.seeusercontent.com/2026/03/02/E0am/Screenshot-2026-03-02-210300-Com.png);
+    background-image: url(common.png);
 }
 .rare{
     background-color: rgb(255, 204, 102);
-    background-image: url(https://files.seeusercontent.com/2026/03/02/6Fhb/Screenshot-2026-03-02-210300-Rar.png);
+    background-image: url(rare.png);
 }
 .epic{
     background-color: rgb(255, 153, 255);
-    background-image: url(https://files.seeusercontent.com/2026/03/02/iU0g/Screenshot-2026-03-02-210300-Epi.png);
+    background-image: url(epic.png);
 }
 .legendary{
     background-color: rgb(255, 200, 255);
-    background-image: url(https://files.seeusercontent.com/2026/03/02/We3t/Screenshot-2026-03-02-210300-Leg.png);
+    background-image: url(legendary.png);
 }
 .obtained{
-    background-color: rgb(100, 255, 150);
-    background-image: none;
+    background-color: rgb(100, 230, 100);
+    background-image: url(obtained.png);
 }
 .selected{
 }
 #controls{
-    min-width: 200px;
+    min-width: 150px;
 }
 button.roll{
     display: block;
