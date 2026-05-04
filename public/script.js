@@ -190,7 +190,7 @@ const RollOnce = (unique = false, detach = false) => {
     //assert(!is_unique || !snippet_elements[row][col].classList.contains("obtained"));
     if(!detach) SetSelected(row, col);
     if(!is_unique){
-        return snippet_rarities[row][col] + 2;
+        return snippet_rarities[row][col] + 3;
     }
     return 0;
 };
