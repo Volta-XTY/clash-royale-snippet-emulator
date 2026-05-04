@@ -151,6 +151,9 @@ class _RollHelper{
     has_item(){
         return this.#back >= 0;
     }
+    remains(){
+        return this.#back + 1;
+    }
     check(){
         let _current = 0, _unique = 0;
         for(let i = 0; i <= this.#back; i++){
@@ -274,5 +277,28 @@ const Emulate = () => {
     console.log(result);
     console.log(accumulated);
 };
-const emulate_btn = HTML("button", {class: "roll", _click: Emulate}, "Emulate 100k");
+const Emulate2 = () => {
+    const times = 500_000;
+    const len = 20;
+    const result = new Array(len).fill(0);
+    Restart();
+    for(let i = 0; i < times; i++){
+        let rolls = 0;
+        while(RollHelper.has_item() && rolls < 84){
+            Roll(1, true, true);
+            rolls += 1;
+        }
+        if(RollHelper.has_item()) result[RollHelper.remains()] += 1;
+        else result[0] += 1;
+        Restart(true);
+    }
+    const accumulated = result.reduce((arr, cur) => {
+        arr.push(arr.at(-1) + cur);
+        return arr;
+    }, [0]).map(i => i / times);
+    accumulated.shift();
+    console.log(result);
+    console.log(accumulated);
+};
+const emulate_btn = HTML("button", {class: "roll", _click: () => Emulate()}, "Emulate 100k");
 control_buttons.append(emulate_btn);

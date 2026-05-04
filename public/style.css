@@ -32,13 +32,12 @@ header{
         display: flex;
         flex-direction: row;
     }
-    #texts{
-        display: grid;
-        column-gap: 10px;
-        grid-template-columns: max-content max-content 1fr;
-    }
 }
-
+#texts{
+    display: grid;
+    column-gap: 10px;
+    grid-template-columns: max-content max-content 1fr;
+}
 .gap{
     width: 10px;
 }
@@ -96,7 +95,7 @@ header{
 .selected{
 }
 #controls{
-    min-width: 150px;
+    min-width: 175px;
 }
 button.roll{
     display: block;
